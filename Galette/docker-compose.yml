@@ -1,0 +1,63 @@
+# docker-compose file for Galette
+# Olivier Guiter
+
+version: '2'
+services:
+    # Web application
+    svc_galette:
+        container_name: galette_app
+        image: bflash4k/galette_app:0.8.3.3
+        volumes:
+            - galette_app:/var/www/html
+
+    # application database container
+    svc_data:
+        container_name: galette_data
+        image: bflash4k/galette_data
+        volumes:
+            #- /home/oguiter/Devel/Docker/OG1/app_galette/Data:/var/lib/mysql
+            - galette_data:/var/lib/mysql
+
+    # mysql engine container / socket on port 3306
+    svc_mysql:
+        container_name: galette_mysql
+        image: mysql/mysql-server:5.7
+        ports:
+            - 8082:3306
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: test
+            MYSQL_USER: test
+            MYSQL_PASSWORD: test
+        volumes_from:
+            - svc_data
+
+    # Apache+php7 engine, mapped 
+    svc_web:
+        container_name: galette_www_php
+        image: bflash4k/apache2-php7:latest
+        ports:
+            - 8080:80
+        volumes_from:
+            - svc_galette
+        links:
+            - svc_mysql
+
+    # PhpMyAdmin
+    svc_phpmyadmin:
+        container_name: galette_phpmyadmin
+        image: phpmyadmin/phpmyadmin
+        ports:
+            - 8081:80
+        links:
+            - svc_mysql:db
+        environment:
+            - PMA_USER=root
+            - PMA_PASSWORD=root
+
+volumes:
+  galette_app:
+    driver: local
+  galette_data:
+    driver: local
+
