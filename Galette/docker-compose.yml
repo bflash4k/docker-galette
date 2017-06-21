@@ -1,5 +1,6 @@
 # docker-compose file for Galette
 # Olivier Guiter
+#
 
 version: '2'
 services:
