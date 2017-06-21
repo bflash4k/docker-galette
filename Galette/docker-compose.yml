@@ -6,7 +6,7 @@ services:
     # Web application
     svc_galette:
         container_name: galette_app
-        image: bflash4k/galette_app:0.8.3.3
+        image: bflash4k/galette_app:0.8.3.4
         volumes:
             - galette_app:/var/www/html
 
